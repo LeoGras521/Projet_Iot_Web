@@ -81,3 +81,63 @@ canvas {
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     margin-bottom: 30px;
 }
+
+/* Section historique */
+.historique {
+    margin-top: 40px;
+}
+
+.historique h2 {
+    font-size: 1.7rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+/* Filtres */
+.filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filters select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: white;
+    font-size: 1rem;
+}
+
+/* Container scrollable */
+.table-container {
+    max-height: 350px;       /* Taille max avant scroll */
+    overflow-y: scroll;      /* Scroll vertical */
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #3498db;
+    color: white;
+    position: sticky;
+    top: 0;                  /* header reste visible au scroll */
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+tbody tr:nth-child(even) {
+    background: #f4f6f9;
+}
+
+tbody tr:hover {
+    background: #eaf2fa;
+}

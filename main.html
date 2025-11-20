@@ -10,9 +10,9 @@
 <body>
     <header>
     <center><h1>Projet ESP 32</h1></center><br>
-    <div class="bande"></div><br><br>
+    <div class="bande"></div><br>
 
-    <h5>Présentation</h5>
+    <h2>Présentation</h2>
     <p>La plateforme web à pour objectif de permettre la visualisation, le suivi et l’analyse des données collectées par le système d’analyse d’environnement intérieur.
     Elle servira d’interface utilisateur entre le réseau d’objets connectés et les utilisateurs finaux
     </p> <br><br>
@@ -34,11 +34,152 @@
         </div>
     </section>
 
-    <section class="graphs">
+    <!-- <section class="graphs">
         <h2>Historique des mesures</h2>
         <canvas id="chart-temp"></canvas>
         <canvas id="chart-hum"></canvas>
         <canvas id="chart-sound"></canvas>
+    </section> -->
+
+    <section class="Historique">
+        <h2>Historique des mesures</h2>
+
+        <div class="filters">
+            <select>
+                <option value="">Tous les capteurs</option>
+                <option value="temperature">Température</option>
+                <option value="humidite">Humidité</option>
+                <option value="son">Niveau sonore</option>
+            </select>
+
+            <select>
+                <option value="">Toute la période</option>
+                <option value="24h">Dernières 24h</option>
+                <option value="7j">7 derniers jours</option>
+                <option value="30j">30 derniers jours</option>
+            </select>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Capteur</th>
+                        <th>Valeur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- données de test -->
+                    <tr> 
+                        <td>2025-11-20 14:32</td>
+                        <td>Température</td>
+                        <td>23.5 °C</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Humidité</td>
+                        <td>47 %</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr><tr>
+                        <td>2025-11-20 14:32</td>
+                        <td>Niveau sonore</td>
+                        <td>32 dB</td>
+                    </tr>
+                    <!-- données futures ici -->
+                </tbody>
+            </table>
+        </div>
+
     </section>
 </body>
 <footer>
