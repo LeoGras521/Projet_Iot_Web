@@ -1,0 +1,77 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base générale */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #222;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    background: #ecf0f1;
+}
+
+/* Carte de login */
+.login-container {
+    background: white;
+    padding: 40px 50px;
+    border-radius: 15px;
+    width: 320px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.login-container h1 {
+    margin-bottom: 5px;
+    font-size: 1.8rem;
+    color: #2c3e50;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    margin-bottom: 25px;
+}
+
+/* Formulaire */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-form label {
+    text-align: left;
+    font-weight: 600;
+    color: #34495e;
+}
+
+.login-form input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+/* Bouton */
+.login-form button {
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    background: #3498db;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.login-form button:hover {
+    background: #2980b9;
+}
