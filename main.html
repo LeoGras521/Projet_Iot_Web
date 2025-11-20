@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<link rel="stylesheet" href="style.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet_Iot_Web</title>
+</head>
+
+<body>
+    <header>
+    <center><h1>Projet ESP 32</h1></center><br>
+    <div class="bande"></div><br><br>
+
+    <h5>Présentation</h5>
+    <p>La plateforme web à pour objectif de permettre la visualisation, le suivi et l’analyse des données collectées par le système d’analyse d’environnement intérieur.
+    Elle servira d’interface utilisateur entre le réseau d’objets connectés et les utilisateurs finaux
+    </p> <br><br>
+    <center><h1>Tableau de bord - Analyse d'environnement</h1></center>
+</header>
+
+<section class="cards">
+        <div class="card">
+            <h3>Température</h3>
+            <p class="value">-- °C</p>
+        </div>
+        <div class="card">
+            <h3>Humidité</h3>
+            <p class="value">-- %</p>
+        </div>
+        <div class="card">
+            <h3>Niveau sonore</h3>
+            <p class="value">-- dB</p>
+        </div>
+    </section>
+
+    <section class="graphs">
+        <h2>Historique des mesures</h2>
+        <canvas id="chart-temp"></canvas>
+        <canvas id="chart-hum"></canvas>
+        <canvas id="chart-sound"></canvas>
+    </section>
+</body>
+<footer>
+
+</footer>
+</html>
