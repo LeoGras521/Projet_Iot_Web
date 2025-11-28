@@ -14,12 +14,13 @@
         <h1>Connexion</h1>
         <p class="subtitle">Accédez au tableau de bord IoT</p>
 
-        <form class="login-form">
-            <label>Email</label>
-            <input type="email" placeholder="exemple@mail.com" required>
+        <form class="login-form" method="POST">
+            {% csrf_token %}
+            <label>Nom d'utilisateur</label>
+            <input type="text" name="username" placeholder="Nom d'utilisateur" required>
 
             <label>Mot de passe</label>
-            <input type="password" placeholder="••••••••" required>
+            <input type="password" name="password" placeholder="••••••••" required>
 
             <button type="submit">Se connecter</button>
         </form>

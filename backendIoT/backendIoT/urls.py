@@ -20,6 +20,6 @@ from api.views import login_page, main_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', login_page),
-    path('main/', main_page),
+    path('login/', login_page, name='login'),
+    path('main/', main_page, name='main'),
 ]
