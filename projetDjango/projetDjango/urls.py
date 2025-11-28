@@ -21,6 +21,6 @@ from backendIoT.api.views import main_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', login_page),
-    path('', main_page),
+    # path('login/', login_page),
+    # path('main/', main_page),
 ]
