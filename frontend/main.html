@@ -1,181 +1,195 @@
 <!DOCTYPE html>
 <html lang="fr">
-<link rel="stylesheet" href="main.css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet_Iot_Web</title>
+    <title>Analyse Environnement Intérieur</title>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
     <header>
-    <center><h1>Projet ESP 32</h1></center><br>
-    <div class="bande"></div><br>
+        <div class="bande"></div>
+        <h1><i class="fas fa-home"></i> Analyse Environnement Intérieur</h1>
+        <h5>Données en temps réel des capteurs</h5>
+    </header>
 
-    <h2>Présentation</h2>
-    <p>La plateforme web à pour objectif de permettre la visualisation, le suivi et l’analyse des données collectées par le système d’analyse d’environnement intérieur.
-    Elle servira d’interface utilisateur entre le réseau d’objets connectés et les utilisateurs finaux
-    </p> <br><br>
-    <center><h1>Tableau de bord - Analyse d'environnement</h1></center>
-</header>
+    <main>
+        <section class="cards" role="region" aria-label="Valeurs actuelles">
+            <div class="card" data-sensor="temperature">
+                <h3><i class="fas fa-thermometer-half"></i> Température</h3>
+                <div class="value">-- °C</div>
+                <div class="unit">°C</div>
+            </div>
+            <div class="card" data-sensor="humidity">
+                <h3><i class="fas fa-tint"></i> Humidité</h3>
+                <div class="value">-- %</div>
+                <div class="unit">%</div>
+            </div>
+            <div class="card" data-sensor="motion">
+                <h3><i class="fas fa-walking"></i> Mouvement</h3>
+                <div class="value">--</div>
+                <div class="unit">Détecté / Non détecté</div>
+            </div>
+        </section>
 
-<section class="cards">
-        <div class="card">
-            <h3>Température</h3>
-            <p class="value">-- °C</p>
-        </div>
-        <div class="card">
-            <h3>Humidité</h3>
-            <p class="value">-- %</p>
-        </div>
-        <div class="card">
-            <h3>Niveau sonore</h3>
-            <p class="value">-- dB</p>
-        </div>
-    </section>
+        <section class="graphs" role="region" aria-label="Graphiques historiques">
+            <h2><i class="fas fa-chart-line"></i> Évolution des mesures</h2>
+            <div class="chart-container">
+                <canvas id="tempChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="humidityChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="mouvementChart"width="400" height="200"></canvas>
+            </div>
+        </section>
 
-    <section class="Historique">
-        <h2>Historique des mesures</h2>
+        <section class="historique" role="region" aria-label="Historique des mesures">
+            <h2><i class="fas fa-history"></i> Historique</h2>
+            <div class="filters">
+                <label for="sensorFilter">Capteur:</label>
+                <select id="sensorFilter" aria-label="Filtrer par capteur">
+                    <option value="all">Tous</option>
+                    <option value="temperature">Température</option>
+                    <option value="humidity">Humidité</option>
+                    <option value="noise">Mouvement</option>
+                </select>
+                <label for="timeFilter">Période:</label>
+                <select id="timeFilter" aria-label="Filtrer par période">
+                    <option value="24h">24h</option>
+                    <option value="7d">7 jours</option>
+                    <option value="30d">30 jours</option>
+                </select>
+                <button id="refreshBtn" aria-label="Actualiser"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <div class="table-container" role="table" aria-label="Tableau des mesures historiques">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Capteur</th>
+                            <th>Valeur</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable">
+                        <!-- Données chargées dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
-        <div class="filters">
-            <select>
-                <option value="">Tous les capteurs</option>
-                <option value="temperature">Température</option>
-                <option value="humidite">Humidité</option>
-                <option value="son">Niveau sonore</option>
-            </select>
+    <script>
+        const API_BASE = '/api';
+        const UPDATE_INTERVAL = 5000;
 
-            <select>
-                <option value="">Toute la période</option>
-                <option value="24h">Dernières 24h</option>
-                <option value="7j">7 derniers jours</option>
-                <option value="30j">30 derniers jours</option>
-            </select>
-        </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Capteur</th>
-                        <th>Valeur</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- données de test -->
-                    <tr> 
-                        <td>2025-11-20 14:32</td>
-                        <td>Température</td>
-                        <td>23.5 °C</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Humidité</td>
-                        <td>47 %</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <!-- données futures ici -->
-                </tbody>
-            </table>
-        </div>
+        let currentData = {};
+        let historyData = [];
+        let charts = {};
 
-    </section>
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        async function initDashboard() {
+            await loadCurrentData();
+            initCharts();
+            loadHistory();
+            setInterval(loadCurrentData, UPDATE_INTERVAL);
+            
+            document.getElementById('sensorFilter').addEventListener('change', loadHistory);
+            document.getElementById('timeFilter').addEventListener('change', loadHistory);
+            document.getElementById('refreshBtn').addEventListener('click', loadHistory);
+        }
+
+        async function loadCurrentData() {
+            try {
+                const response = await fetch(`${API_BASE}/latest`);
+                const data = await response.json();
+                
+                currentData = data;
+                updateCards(data);
+                updateCharts(data);
+                
+            } catch (error) {
+                console.error('Erreur chargement données:', error);
+                showError('Impossible de charger les données');
+            }
+        }
+
+        function updateCards(data) {
+            document.querySelectorAll('.card').forEach(card => {
+                const sensor = card.dataset.sensor;
+                const valueEl = card.querySelector('.value');
+                const unitEl = card.querySelector('.unit');
+                
+                if (data[sensor]) {
+                    valueEl.textContent = data[sensor].value.toFixed(1);
+                    unitEl.textContent = data[sensor].unit;
+                    card.classList.remove('error');
+                }
+            });
+        }
+
+        function initCharts() {
+            const ctxTemp = document.getElementById('tempChart').getContext('2d');
+            charts.temp = new Chart(ctxTemp, {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: 'Température', data: [], borderColor: '#ff6384', fill: false }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false } } }
+            });
+
+            const ctxHum = document.getElementById('humidityChart').getContext('2d');
+            charts.humidity = new Chart(ctxHum, {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: 'Humidité', data: [], borderColor: '#36a2eb', fill: false }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+
+            const ctxMouv = document.getElementById('mouvementChart').getContext('2d');
+            charts.mouvement = new Chart(ctxMouv, {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: 'Mouvement', data: [], borderColor: '#36a2eb', fill: false }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+        }
+
+        function updateCharts(data) {
+            // Logique simplifiée - à adapter selon vos données
+        }
+
+        async function loadHistory() {
+            try {
+                const sensor = document.getElementById('sensorFilter').value;
+                const period = document.getElementById('timeFilter').value;
+                
+                const response = await fetch(`${API_BASE}/history?sensor=${sensor}&period=${period}`);
+                historyData = await response.json();
+                renderHistory();
+            } catch (error) {
+                console.error('Erreur historique:', error);
+            }
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('historyTable');
+            tbody.innerHTML = historyData.map(row => `
+                <tr>
+                    <td>${new Date(row.timestamp).toLocaleString('fr-FR')}</td>
+                    <td>${row.sensor}</td>
+                    <td>${row.value} ${row.unit}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showError(message) {
+            console.error(message);
+        }
+
+        document.querySelectorAll('button, select').forEach(el => {
+            el.addEventListener('focus', () => el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+        });
+    </script>
 </body>
-<footer>
-
-</footer>
 </html>
