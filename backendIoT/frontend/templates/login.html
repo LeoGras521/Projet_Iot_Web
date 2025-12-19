@@ -22,6 +22,10 @@
             <label>Mot de passe</label>
             <input type="password" name="password" placeholder="••••••••" required>
 
+            {% if error %}
+                <p style="color:red;">{{ error }}</p>
+            {% endif %}
+
             <button type="submit">Se connecter</button>
         </form>
     </div>

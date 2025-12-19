@@ -15,25 +15,51 @@
     <center><h1>Projet ESP 32</h1></center><br>
     <div class="bande"></div><br>
 
-    <h2>Présentation</h2>
+    <h2 class="presentation">Présentation</h2>
     <p>La plateforme web à pour objectif de permettre la visualisation, le suivi et l’analyse des données collectées par le système d’analyse d’environnement intérieur.
     Elle servira d’interface utilisateur entre le réseau d’objets connectés et les utilisateurs finaux
     </p> <br><br>
+
+    <div class="esp-section">
+            <div class="esp-header">
+                <h2>Mes ESP disponibles</h2>
+                <a href="/add-device/" class="btn-add">+ Ajouter un ESP</a>
+            </div>
+            
+            <div class="esp-grid">
+                {% for device in devices %}
+                <div class="esp-card">
+                    <div class="esp-status {% if device.status == 'online' %}online{% else %}offline{% endif %}"></div>
+                    <h3>{{ device.name }}</h3>
+                    <p>IP: {{ device.ip }}</p>
+                    <button class="btn-select" onclick="selectESP('{{ device.id }}')">Sélectionner</button>
+                </div>
+                {% empty %}
+                <p class="no-esp">Aucun ESP disponible. <a href="/add-device/">Ajoutez-en un</a></p>
+                {% endfor %}
+            </div>
+        </div>
+        <br>
+
+
     <center><h1>Tableau de bord - Analyse d'environnement</h1></center>
 </header>
 
 <section class="cards">
         <div class="card">
-            <h3>Température</h3>
+            
+            <h3> <div class="card-icon">Température🌡️</div></h3>
             <p class="value">-- °C</p>
         </div>
         <div class="card">
-            <h3>Humidité</h3>
+            
+            <h3><div class="card-icon">Humidité💧</div></h3>
             <p class="value">-- %</p>
         </div>
         <div class="card">
-            <h3>Niveau sonore</h3>
-            <p class="value">-- dB</p>
+            
+            <h3><div class="card-icon">Présence👤</div></h3>
+            <p class="value">-- O/N</p>
         </div>
     </section>
 
@@ -45,7 +71,7 @@
                 <option value="">Tous les capteurs</option>
                 <option value="temperature">Température</option>
                 <option value="humidite">Humidité</option>
-                <option value="son">Niveau sonore</option>
+                <option value="detection">Detection de présence</option>
             </select>
 
             <select>
@@ -100,64 +126,6 @@
                         <td>2025-11-20 14:32</td>
                         <td>Niveau sonore</td>
                         <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
                     </tr><tr>
                         <td>2025-11-20 14:32</td>
                         <td>Niveau sonore</td>
@@ -177,6 +145,14 @@
         </div>
 
     </section>
+
+    <script>
+        function selectESP(espId) {
+            console.log('ESP sélectionné:', espId);
+            // Tu pourras ajouter la logique pour charger les données de cet ESP
+            alert('ESP ' + espId + ' sélectionné !');
+        }
+    </script>
 </body>
 <footer>
 
