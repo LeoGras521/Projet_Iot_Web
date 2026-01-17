@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api.views import login_page, main_page, mqtt_page, add_device
+from api.views import login_page, main_page, mqtt_page, add_device, latest
 
 
 urlpatterns = [
@@ -25,4 +25,5 @@ urlpatterns = [
     path('main/', main_page, name='main'),
     path('mqtt/', mqtt_page, name='mqtt'),
     path('add-device/', add_device, name='add_device'),
+    path('latest/', latest),
 ]

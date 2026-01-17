@@ -3,9 +3,29 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-# Create your views here.
 
-# Créer un user de test au démarrage (une seule fois)
+from rest_framework.response import Response
+from django.utils import timezone
+from datetime import timedelta
+from rest_framework.decorators import api_view
+from .models import Measurement
+
+@api_view(['GET'])
+def latest(request):
+    if request.method == 'GET':
+        recent = timezone.now()
+    recent = timezone.now() - timedelta(minutes=15)
+    data = Measurement.objects.filter(
+        timestamp__gte=recent
+    ).select_related('sensor').order_by('-timestamp')
+    sensors = {}
+    for m in data:
+        st = m.sensor.sensor_type
+        if st not in sensors:
+            sensors[st] = {'latest': float(m.value), 'time': m.timestamp.isoformat()}
+    return Response(sensors)
+
+
 try:
     User.objects.get(username='test') #pseudo
 except User.DoesNotExist:
