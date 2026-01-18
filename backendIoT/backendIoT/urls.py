@@ -16,14 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api.views import login_page, main_page, mqtt_page, add_device, latest
+from django.shortcuts import redirect
+from api.views import login_page, register_page, logout_page, main_page, mqtt_page, add_device
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', lambda request: redirect('login/'), name='home'),
     path('login/', login_page, name='login'),
+    path('register/', register_page, name='register'),
+    path('logout/', logout_page, name='logout'),
     path('main/', main_page, name='main'),
     path('mqtt/', mqtt_page, name='mqtt'),
     path('add-device/', add_device, name='add_device'),
-    path('latest/', latest),
 ]

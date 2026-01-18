@@ -12,149 +12,215 @@
 
 <body>
     <header>
-    <center><h1>Projet ESP 32</h1></center><br>
-    <div class="bande"></div><br>
-
-    <h2 class="presentation">Présentation</h2>
-    <p>La plateforme web à pour objectif de permettre la visualisation, le suivi et l’analyse des données collectées par le système d’analyse d’environnement intérieur.
-    Elle servira d’interface utilisateur entre le réseau d’objets connectés et les utilisateurs finaux
-    </p> <br><br>
-
-    <div class="esp-section">
-            <div class="esp-header">
-                <h2>Mes ESP disponibles</h2>
-                <a href="/add-device/" class="btn-add">+ Ajouter un ESP</a>
-            </div>
-            
-            <div class="esp-grid">
-                {% for device in devices %}
-                <div class="esp-card">
-                    <div class="esp-status {% if device.status == 'online' %}online{% else %}offline{% endif %}"></div>
-                    <h3>{{ device.name }}</h3>
-                    <p>IP: {{ device.ip }}</p>
-                    <button class="btn-select" onclick="selectESP('{{ device.id }}')">Sélectionner</button>
-                </div>
-                {% empty %}
-                <p class="no-esp">Aucun ESP disponible. <a href="/add-device/">Ajoutez-en un</a></p>
-                {% endfor %}
+        <div class="header-top">
+            <h1>Projet ESP 32</h1>
+            <div class="user-menu">
+                <span class="username">👤 {{ username }}</span>
+                <a href="/logout/" class="btn-logout">Déconnexion</a>
             </div>
         </div>
-        <br>
+        <div class="bande"></div>
+        <h2 class="presentation">Présentation</h2>
+        <p>La plateforme web à pour objectif de permettre la visualisation, le suivi et l'analyse des données collectées par le système d'analyse d'environnement intérieur.
+        Elle servira d'interface utilisateur entre le réseau d'objets connectés et les utilisateurs finaux.</p>
+    </header>
 
+    <div class="container">
+        <h1 style="text-align: center; color: #ecf0f1; margin-bottom: 30px; font-size: 2.5rem; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);">Tableau de bord - Analyse d'environnement</h1>
 
-    <center><h1>Tableau de bord - Analyse d'environnement</h1></center>
-</header>
+        <section class="cards">
+            <div class="card">
+                <div class="card-icon">🌡️</div>
+                <h3>Température</h3>
+                <p class="value" id="temperature-value">
+                    {% if sensor_data.temperature %}{{ sensor_data.temperature.latest|floatformat:1 }} °C{% else %}-- °C{% endif %}
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">💧</div>
+                <h3>Humidité</h3>
+                <p class="value" id="humidity-value">
+                    {% if sensor_data.humidity %}{{ sensor_data.humidity.latest|floatformat:1 }} %{% else %}-- %{% endif %}
+                </p>
+            </div>
+            <div class="card">
+                <div class="card-icon">👤</div>
+                <h3>Présence</h3>
+                <p class="value" id="presence-value">
+                    {% if sensor_data.presence %}
+                        {% if sensor_data.presence.latest >= 1 %}Oui{% else %}Non{% endif %}
+                    {% else %}-- O/N{% endif %}
+                </p>
+            </div>
+        </section>
 
-<section class="cards">
-        <div class="card">
-            
-            <h3> <div class="card-icon">Température🌡️</div></h3>
-            <p class="value">-- °C</p>
-        </div>
-        <div class="card">
-            
-            <h3><div class="card-icon">Humidité💧</div></h3>
-            <p class="value">-- %</p>
-        </div>
-        <div class="card">
-            
-            <h3><div class="card-icon">Présence👤</div></h3>
-            <p class="value">-- O/N</p>
-        </div>
-    </section>
-
-    <section class="Historique">
+        <section class="Historique">
         <h2>Historique des mesures</h2>
 
         <div class="filters">
-            <select>
+            <select id="filter-sensor" onchange="applyFilters()">
                 <option value="">Tous les capteurs</option>
-                <option value="temperature">Température</option>
-                <option value="humidite">Humidité</option>
-                <option value="detection">Detection de présence</option>
+                <option value="temperature" {% if current_filter_sensor == 'temperature' %}selected{% endif %}>Température</option>
+                <option value="humidity" {% if current_filter_sensor == 'humidity' %}selected{% endif %}>Humidité</option>
+                <option value="presence" {% if current_filter_sensor == 'presence' %}selected{% endif %}>Présence</option>
             </select>
 
-            <select>
+            <select id="filter-period" onchange="applyFilters()">
                 <option value="">Toute la période</option>
-                <option value="24h">Dernières 24h</option>
-                <option value="7j">7 derniers jours</option>
-                <option value="30j">30 derniers jours</option>
+                <option value="24h" {% if current_filter_period == '24h' %}selected{% endif %}>Dernières 24h</option>
+                <option value="7j" {% if current_filter_period == '7j' %}selected{% endif %}>7 derniers jours</option>
+                <option value="30j" {% if current_filter_period == '30j' %}selected{% endif %}>30 derniers jours</option>
             </select>
         </div>
         <div class="table-container">
-            <table>
+            <table id="history-table">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Capteur</th>
-                        <th>Valeur</th>
+                        <th onclick="sortTable(0)" class="sortable">
+                            Date et heure <span class="sort-icon">↕</span>
+                        </th>
+                        <th onclick="sortTable(1)" class="sortable">
+                            Capteur <span class="sort-icon">↕</span>
+                        </th>
+                        <th onclick="sortTable(2)" class="sortable">
+                            Valeur <span class="sort-icon">↕</span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- données de test -->
-                    <tr> 
-                        <td>2025-11-20 14:32</td>
-                        <td>Température</td>
-                        <td>23.5 °C</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Humidité</td>
-                        <td>47 %</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr><tr>
-                        <td>2025-11-20 14:32</td>
-                        <td>Niveau sonore</td>
-                        <td>32 dB</td>
-                    </tr>
-                    <!-- données futures ici -->
+                    {% if history_data %}
+                        {% for measurement in history_data %}
+                        <tr data-timestamp="{{ measurement.timestamp_iso }}">
+                            <td>
+                                <span class="date-time">{{ measurement.timestamp|date:"d/m/Y" }}</span>
+                                <span class="time-only">{{ measurement.timestamp|date:"H:i:s" }}</span>
+                            </td>
+                            <td>
+                                <span class="sensor-badge sensor-{{ measurement.sensor_type_raw }}">
+                                    {% if measurement.sensor_type_raw == 'temperature' %}
+                                    {% elif measurement.sensor_type_raw == 'humidity' %}
+                                    {% elif measurement.sensor_type_raw == 'presence' %}
+                                    {% else %}{% endif %}
+                                    {{ measurement.sensor_type }}
+                                </span>
+                            </td>
+                            <td class="value-cell">
+                                <strong>{{ measurement.value }}</strong>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="no-data-row">
+                            <td colspan="3" class="no-data">
+                                <div class="no-data-content">
+                                    <span class="no-data-icon">📊</span>
+                                    <p>Aucune mesure disponible</p>
+                                    <small>Les données apparaîtront ici une fois que les capteurs enverront des mesures.</small>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>
+        {% if history_data %}
+        <div class="table-info">
+            <p>Affichage de <strong>{{ history_data|length }}</strong> mesure{{ history_data|length|pluralize }}</p>
+        </div>
+        {% endif %}
+        </section>
+    </div>
 
-    </section>
+    <footer style="margin-top: 50px; padding: 20px; text-align: center; color: #ffffff;">
+        <p>© 2025 Projet IoT - Système d'analyse d'environnement</p>
+    </footer>
 
     <script>
-        function selectESP(espId) {
-            console.log('ESP sélectionné:', espId);
-            // Tu pourras ajouter la logique pour charger les données de cet ESP
-            alert('ESP ' + espId + ' sélectionné !');
+        let sortDirection = {};
+        
+        function applyFilters() {
+            const sensor = document.getElementById('filter-sensor').value;
+            const period = document.getElementById('filter-period').value;
+            const params = new URLSearchParams();
+            if (sensor) params.append('sensor', sensor);
+            if (period) params.append('period', period);
+            window.location.search = params.toString();
         }
+        
+        function sortTable(columnIndex) {
+            const table = document.getElementById('history-table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr:not(.no-data-row)'));
+            
+            // Vérifier s'il y a des données
+            if (rows.length === 0) return;
+            
+            // Initialiser la direction si nécessaire
+            if (!sortDirection[columnIndex]) {
+                sortDirection[columnIndex] = 'asc';
+            } else {
+                sortDirection[columnIndex] = sortDirection[columnIndex] === 'asc' ? 'desc' : 'asc';
+            }
+            
+            // Trier les lignes
+            rows.sort((a, b) => {
+                // Tri spécial pour les dates (colonne 0)
+                if (columnIndex === 0) {
+                    const aTimestamp = a.getAttribute('data-timestamp');
+                    const bTimestamp = b.getAttribute('data-timestamp');
+                    if (aTimestamp && bTimestamp) {
+                        const aDate = new Date(aTimestamp);
+                        const bDate = new Date(bTimestamp);
+                        return sortDirection[columnIndex] === 'asc' ? aDate - bDate : bDate - aDate;
+                    }
+                }
+                
+                // Tri pour les valeurs numériques (colonne 2)
+                if (columnIndex === 2) {
+                    const aText = a.cells[columnIndex].textContent.trim();
+                    const bText = b.cells[columnIndex].textContent.trim();
+                    const aNum = parseFloat(aText);
+                    const bNum = parseFloat(bText);
+                    
+                    if (!isNaN(aNum) && !isNaN(bNum)) {
+                        return sortDirection[columnIndex] === 'asc' ? aNum - bNum : bNum - aNum;
+                    }
+                }
+                
+                // Tri alphabétique pour les autres colonnes
+                const aText = a.cells[columnIndex].textContent.trim();
+                const bText = b.cells[columnIndex].textContent.trim();
+                
+                if (sortDirection[columnIndex] === 'asc') {
+                    return aText.localeCompare(bText, 'fr', { numeric: true });
+                } else {
+                    return bText.localeCompare(aText, 'fr', { numeric: true });
+                }
+            });
+            
+            // Réorganiser les lignes dans le DOM
+            rows.forEach(row => tbody.appendChild(row));
+            
+            // Mettre à jour les icônes de tri
+            const headers = table.querySelectorAll('th');
+            headers.forEach((header, index) => {
+                const icon = header.querySelector('.sort-icon');
+                if (icon) {
+                    if (index === columnIndex) {
+                        icon.textContent = sortDirection[columnIndex] === 'asc' ? '↑' : '↓';
+                        icon.style.opacity = '1';
+                    } else {
+                        icon.textContent = '↕';
+                        icon.style.opacity = '0.7';
+                    }
+                }
+            });
+        }
+        
+        // Rafraîchir la page toutes les 5 secondes pour mettre à jour les données
+        setInterval(function() {
+            location.reload();
+        }, 5000);
     </script>
 </body>
-<footer>
-
-</footer>
 </html>

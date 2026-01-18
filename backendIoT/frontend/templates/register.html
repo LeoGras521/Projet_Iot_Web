@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Projet IoT</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>📝 Inscription</h1>
+                <p class="subtitle">Créez votre compte pour accéder au tableau de bord</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form class="auth-form" method="POST">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input 
+                        type="text" 
+                        id="username"
+                        name="username" 
+                        placeholder="Choisissez un nom d'utilisateur" 
+                        required
+                        autocomplete="username"
+                        minlength="3"
+                        value="{% if request.POST.username %}{{ request.POST.username }}{% endif %}"
+                    >
+                    <small>Minimum 3 caractères</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" 
+                        id="email"
+                        name="email" 
+                        placeholder="votre.email@exemple.com" 
+                        required
+                        autocomplete="email"
+                        value="{% if request.POST.email %}{{ request.POST.email }}{% endif %}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input 
+                        type="password" 
+                        id="password"
+                        name="password" 
+                        placeholder="••••••••" 
+                        required
+                        autocomplete="new-password"
+                        minlength="6"
+                    >
+                    <small>Minimum 6 caractères</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password_confirm">Confirmer le mot de passe</label>
+                    <input 
+                        type="password" 
+                        id="password_confirm"
+                        name="password_confirm" 
+                        placeholder="••••••••" 
+                        required
+                        autocomplete="new-password"
+                    >
+                </div>
+
+                {% if error %}
+                    <div class="error-message">
+                        <span class="error-icon">⚠️</span>
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                <button type="submit" class="btn-primary">
+                    Créer mon compte
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Déjà un compte ? <a href="/login/">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vérification en temps réel de la correspondance des mots de passe
+        const password = document.getElementById('password');
+        const passwordConfirm = document.getElementById('password_confirm');
+        
+        function checkPasswordMatch() {
+            if (passwordConfirm.value && password.value !== passwordConfirm.value) {
+                passwordConfirm.setCustomValidity('Les mots de passe ne correspondent pas');
+            } else {
+                passwordConfirm.setCustomValidity('');
+            }
+        }
+        
+        password.addEventListener('input', checkPasswordMatch);
+        passwordConfirm.addEventListener('input', checkPasswordMatch);
+    </script>
+</body>
+</html>

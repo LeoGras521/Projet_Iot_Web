@@ -4,30 +4,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
-
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>Connexion - Projet IoT</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 
 <body>
-    <div class="login-container">
-        <h1>Connexion</h1>
-        <p class="subtitle">Accédez au tableau de bord IoT</p>
+    <div class="background-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+    </div>
 
-        <form class="login-form" method="POST">
-            {% csrf_token %}
-            <label>Nom d'utilisateur</label>
-            <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-container">
+                    <div class="logo-icon">🌡️</div>
+                </div>
+                <h1>Connexion</h1>
+                <p class="subtitle">Accédez à votre tableau de bord IoT</p>
+            </div>
 
-            <label>Mot de passe</label>
-            <input type="password" name="password" placeholder="••••••••" required>
-
-            {% if error %}
-                <p style="color:red;">{{ error }}</p>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }} animate-slide-down">
+                        <span class="message-icon">
+                            {% if message.tags == 'success' %}✓{% else %}⚠️{% endif %}
+                        </span>
+                        {{ message }}
+                    </div>
+                {% endfor %}
             {% endif %}
 
-            <button type="submit">Se connecter</button>
-        </form>
+            <form class="auth-form" method="POST" id="loginForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="username">
+                        <span class="label-icon">👤</span>
+                        Nom d'utilisateur
+                    </label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="username"
+                            name="username" 
+                            placeholder="Entrez votre nom d'utilisateur" 
+                            required
+                            autocomplete="username"
+                            value="{% if request.POST.username %}{{ request.POST.username }}{% endif %}"
+                        >
+                        <span class="input-focus-border"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <span class="label-icon">🔒</span>
+                        Mot de passe
+                    </label>
+                    <div class="input-wrapper password-wrapper">
+                        <input 
+                            type="password" 
+                            id="password"
+                            name="password" 
+                            placeholder="••••••••" 
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Afficher/Masquer le mot de passe">
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                        <span class="input-focus-border"></span>
+                    </div>
+                </div>
+
+                {% if error %}
+                    <div class="error-message animate-shake">
+                        <span class="error-icon">⚠️</span>
+                        <span>{{ error }}</span>
+                    </div>
+                {% endif %}
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <span class="btn-text">Se connecter</span>
+                    <span class="btn-loader" style="display: none;">
+                        <span class="spinner"></span>
+                    </span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Pas encore de compte ? <a href="/register/" class="register-link">Créer un compte</a></p>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                const eyeIcon = this.querySelector('.eye-icon');
+                eyeIcon.textContent = type === 'password' ? '👁️' : '🙈';
+            });
+        }
+
+        // Form submission with loading state
+        const loginForm = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (loginForm && submitBtn) {
+            loginForm.addEventListener('submit', function() {
+                const btnText = submitBtn.querySelector('.btn-text');
+                const btnLoader = submitBtn.querySelector('.btn-loader');
+                
+                if (btnText && btnLoader) {
+                    btnText.style.display = 'none';
+                    btnLoader.style.display = 'flex';
+                    submitBtn.disabled = true;
+                }
+            });
+        }
+
+        // Input focus animations
+        const inputs = document.querySelectorAll('.form-group input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+            
+            // Check if input has value on load
+            if (input.value) {
+                input.parentElement.classList.add('focused');
+            }
+        });
+    </script>
 </body>
 </html>
